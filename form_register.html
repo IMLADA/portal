@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="requests.php" method="POST">
+        <label>Имя:</label>
+        <input type="text" name="firstname" required>
+        <br><label>Фамилия:</label>
+        <input type="text" name="lastname" required>
+        <br><label>Отчество:</label>
+        <input type="text" name="secondname" required>
+        <br><label>Логин:</label>
+        <input type="login" name="login" required>
+        <br><label>Пароль:</label>
+        <input type="password" name="password" required>
+        <br><label>Повтор пароль:</label>
+        <input type="password" name="password_repeat" required>
+        <br><label>Электронная почта:</label>
+        <input type="email" name="email" required><br>
+        <input type="checkbox" name="checkbox" id="checkbox" required/>
+        <label>Согласие на обработку ПД</label><br>
+        <input type="submit" name="submit">
+        <button type="button" onclick="Register();">
+            РегаПРО
+        </button>
+        <div id="status"></div>
+    </form>
+    <script type="text/javascript">
+        function Register() {
+            let firstname = document.getElementsByName("firstname")[0].value;
+            let lastname = document.getElementsByName("lastname")[0].value;
+            let secondname = document.getElementsByName("secondname")[0].value;
+            let login = document.getElementsByName("login")[0].value;
+            let password = document.getElementsByName("password")[0].value;
+            let password_repeat = document.getElementsByName("password_repeat")[0].value;
+            let email = document.getElementsByName("email")[0].value;
+            let checkbox = document
+            .getElementById("checkbox").checked;
+            console.log(`${firstname} ${lastname} 
+                        ${secondname} ${login} 
+                        ${password} ${password_repeat} 
+                        ${email} ${checkbox}`);
+            
+            function CheckName(name) {
+                //проверка на кирилицу, пробел и дефис
+                if (/^[а-яА-ЯёЁ -]+$/.test(name) == false) {
+                    //если ФИО не на кириллице
+                    document.getElementById("status")
+                    .innerHTML = "только кириллические буквы, дефис и пробелы";
+                } else {
+                    //иначе содержится только кириллица, пробелы и дефисы
+                    document.getElementById("status")
+                    .innerHTML = "Ваше ФИО валидное";
+                    return true;
+                }
+            }
+
+            
+            function CheckEmail(email){
+                //проверка email
+                if (/^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/.test(email) == false) {
+                    //если ФИО не на кириллице
+                    document.getElementById("status")
+                    .innerHTML = "еmail не валидный, только латиница";
+                } else {
+                    //иначе только кириллица
+                    document.getElementById("status")
+                    .innerHTML = "Ваш email валидный";
+                    return true;
+                }
+            }
+            
+            function CheckPasswords(pas,repas) {
+                //проверка пароля
+                if (pas == repas) {
+                    //пароли совпадают
+                    document.getElementById("status")
+                    .innerHTML = "Пароли совпадают";
+                    return true;
+                } else {
+                    //пароли не совпадают
+                    document.getElementById("status")
+                    .innerHTML = "Пароли не совпадают";
+                }
+            }
+            
+            function CheckBox(checkbox) {
+                if (checkbox) {
+                    document.getElementById("status")
+                    .innerHTML = "Согласие на БПД дано";
+                    return true;
+                } else {
+                    document.getElementById("status")
+                    .innerHTML = "Согласие на БПД не дано";
+                }
+            }
+            
+            if (CheckBox(checkbox) &&
+                CheckPasswords(password, password_repeat) &&
+                CheckEmail(email) &&
+                CheckName(secondname) &&
+                CheckName(lastname) &&
+                CheckName(firstname)
+                )
+            {
+                aaa();
+                document.location.href= await "/";
+            }
+            async function aaa(){
+                
+                let response = await fetch('requests.php',{
+                    body: JSON.stringify({
+                        firstname,
+                        lastname,
+                        secondname,
+                        login,
+                        password,
+                        email
+                    }),
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                        // 'Content-Type': 'application/x-www-form-urlencoded',
+                    }
+                })
+                console.log(await response.json());
+            }
+        }
+    </script>
+</body>
+</html>

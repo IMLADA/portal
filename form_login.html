@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="requests.php" method="POST">
+        <br><label>Логин:</label>
+        <input type="login" name="login" required>
+        <br><label>Пароль:</label>
+        <input type="password" name="password" required>
+        <button type="button" onclick="Login();">
+            Авторизация
+        </button>
+        <div id="status"></div>
+    </form>
+    <script type="text/javascript">
+        function Login() {
+            //получаем логин и пароль ведденный пользователем
+            let login = document.getElementsByName("login")[0].value;
+            let password = document.getElementsByName("password")[0].value;
+            console.log(`${login} ${password}`);
+            Auth();
+            async function Auth(){
+                // отправляем данные на сервер в скрипт login.php
+                let response = await fetch('/login.php',{
+                    //формируем тело запроса
+                    body: JSON.stringify({
+                        login,
+                        password,
+                    }),
+                    //выбираем тип запроса, POST безопасная отправка данных, веденных пользователем
+                    method: 'POST',
+                    //настраиваем шапка запроса
+                    headers: {
+                        'Content-Type': 'application/json'
+                        // 'Content-Type': 'application/x-www-form-urlencoded',
+                    }
+                })
+                let dates = await response.json();
+                if (dates['status'] == true) {
+                    document.location.href= await "/";
+                }
+            }
+        }
+    </script>
+</body>
+</html>
